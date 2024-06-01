@@ -1,14 +1,33 @@
+# Determine the home directory based on the operating system
+ifeq ($(OS),Windows_NT)
+	HOME_DIR := $(USERPROFILE)
+	PYTHON := python
+	PIP := pip
+	SEP := \
+	SHELL := cmd
+	GO_CMD := go.bat
+else
+	HOME_DIR := $(HOME)
+	PYTHON := python3
+	PIP := pip3
+	SEP := /
+	GO_CMD := while true; do make run; done
+endif
+
+DIAMBRA_DIR := $(HOME_DIR)$(SEP).diambra$(SEP)roms
+
+# Targets
 run:
-	diambra -r ~/.diambra/roms run -l python3 script.py
+	diambra -r $(DIAMBRA_DIR) run -l $(PYTHON) script.py
 
 demo:
-	diambra -r ~/.diambra/roms run -l python3 demo.py && python3 result.py
+	diambra -r $(DIAMBRA_DIR) run -l $(PYTHON) demo.py && $(PYTHON) result.py
 
 local:
-	diambra -r ~/.diambra/roms run -l python3 ollama.py
+	diambra -r $(DIAMBRA_DIR) run -l $(PYTHON) ollama.py
 
 install:
-	pip3 install -r requirements.txt
+	$(PIP) install -r requirements.txt
 
 go:
-	while true; do make run; done
+	$(GO_CMD)
